@@ -1,0 +1,7 @@
+{% if releases %}
+{% include "timeline/my_releases.html" %}
+{% else %}
+<div class="center-text">No releases in your collection</div>
+{% endif %}
+{% include "timeline/search.html" %}
+<script type="text/javascript" src="{{ STATIC_URL }}homepage.js"></script>

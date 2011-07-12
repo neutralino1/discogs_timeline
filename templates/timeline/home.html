@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block title %}Welcome to Discogs timeline!{% endblock %}
+
+{% block content %}
+{% if user.is_authenticated %}
+{% include "timeline/homepage.html" %}
+{% else %}
+{% include "timeline/signuplogin.html" %}
+{% endif %}
+<script type="text/javascript" src="{{ STATIC_URL }}home.js"></script>
+{% endblock %}

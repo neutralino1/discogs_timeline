@@ -1,0 +1,219 @@
+body {
+    font-family:Arial;
+    margin:0;
+    background-color:#e4e7ec;
+}
+
+div#header {
+    width:100%;
+    background-color:#2b71f1;
+    border-bottom:1px solid grey;
+//    padding:20px 0px;
+    margin-bottom:40px;
+}
+
+div#content{
+    margin:40px;
+}
+
+span.release-name{
+    font-size:25px;
+    font-weight:bold;
+}
+
+span.artist-name{
+}
+
+span.label-name{
+    font-size:13px;
+}
+
+span.cat-no{
+    font-size:10px;
+    color:grey;
+}
+
+.light-grey {
+    background-color:#f1f2f3;
+}
+
+div#search-results{
+    width:800px;
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:40px;
+    padding:20px;
+}
+
+div#search-results ul{
+    list-style-type:none;
+    margin:0px;
+    padding:0px;
+}
+
+div#search-results li{
+    height:100px;
+    margin:2px;
+}
+
+div#logo{
+    width:50%;
+    font-size:60px;
+    color:#cdd0d7;
+    margin-left:20px;
+    margin-top:5px;
+}
+
+div#logo img{
+    height:60px;
+    vertical-align:middle;
+}
+
+div.login-box{
+    border:1px solid #8395b7;
+    padding:20px;
+    width:320px;
+    background-color:#abc4f3;
+}
+
+div#logout-button {
+    text-align:right;
+    padding:0px 20px;
+    margin:15px;
+}
+
+div#logout-button input{
+    font-size:10px;
+    padding:0px;
+}
+
+input.faded{
+    color:grey;
+}
+
+input.set{
+    color:#121212;
+}
+
+input.big {
+    font-size:20px;
+    padding:10px;
+    margin-top:10px;
+}
+
+div#search-box {
+    margin-left:auto;
+    margin-right:auto;
+    margin-top:20px;
+    border:1px solid #8395b7;
+    padding:20px;
+    width:635px;
+    background-color:#abc4f3;
+}
+
+input#search-query {
+    width:500px;
+
+}
+
+.maiden{
+    font-family: 'Maiden Orange', arial, serif; 
+}
+
+.aright{
+    text-align:right;
+}
+
+.fleft{
+    float:left;
+}
+
+.fright {
+    float:right;
+}
+.fclear {
+    clear:both;
+}
+.center-div {
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.center-text {
+    text-align:center;
+}
+
+.right-text {
+    text-align:right;
+}
+
+.add-release{
+    width:40px;
+    height:70px;
+}
+
+.add-release input {
+    background: none repeat scroll 0 0 transparent;
+    border: 0 none;
+    color: #8BDC79;
+    font-size: 30px;
+    font-weight: bold;
+    margin-top: 30px;
+    cursor:pointer;
+}
+
+div#my-collection{
+    width:900px;
+    border:1px solid #8395b7;
+    margin-bottom:20px;
+}
+
+div#my-collection ul{
+    list-style-type:none;
+    margin:0px;
+    padding:0px;
+}
+
+div#my-collection li{
+    width:32%;
+    margin:5px;
+}
+div.collection-item{
+position:relative;
+}
+div.collection-item img.thumb{
+    width:54px;
+    margin:1px;
+}
+span.collection-release {
+    font-weight:bold;
+}
+span.collection-artist {
+    font-size:15px;
+    margin-bottom:-5px;
+}
+
+span.discogs-id{
+    background:url('img/discogs_16.png') no-repeat;
+    font-size:10px;
+    color:grey;
+    padding-left:20px;
+    height:10px;
+    padding-top:3px;
+}
+
+div.collection-item form.delete{
+    position:absolute;
+    top:0px;
+    right:0px;
+}
+
+div.collection-item form.delete input{
+    background:url('img/delete.png') no-repeat;
+    border:0px;
+    cursor:pointer;
+}
+
+.hidden {
+    display:none;
+}

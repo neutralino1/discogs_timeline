@@ -1,0 +1,22 @@
+{% load url from future %}
+<a href="{% url 'timeline.views.timeline' %}">Your collection's timeline</a>
+<div id="my-collection" class="center-div light-grey">
+<ul>
+{% for r in releases %}
+<li class="fleft">
+<div class="collection-item">
+<img src="{{ r.thumb }}" class="fleft thumb"/>
+<span class="collection-release">{{r.name}}</span><br/>
+<span class="collection-artist">{{r.artist}}</span></br>
+<span class="discogs-id"><a href="http://discogs.com/master/{{r.discogs_id}}">{{r.discogs_id}}</a></span><span class="cat-no">
+  | {{r.catno}}</span>
+<form action="{% url 'timeline.views.delete_release' %}"
+  method="delete" class="delete">
+<input type="hidden" name="id" value="{{ r.id }}" />
+<input type="submit" class="hidden" value=""/></form>
+</div>
+</li>
+{% endfor %}
+</ul>
+<div class="fclear"></div>
+</div>

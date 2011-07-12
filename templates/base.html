@@ -1,0 +1,34 @@
+{% load url from future %}
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN">
+<html lang="en">
+<head>
+  <link href='http://fonts.googleapis.com/css?family=Maiden+Orange&v1' rel='stylesheet' type='text/css'>
+  <link type="text/css" href="{{ STATIC_URL }}style.css"
+	rel="stylesheet">
+  <script type="text/javascript" src="{{ STATIC_URL }}jquery-1.6.2.min.js"></script>
+    <title>{% block title %}{% endblock %}</title>
+</head>
+<body>
+  <div id="header">
+    <div id="logo" class="maiden fleft">
+    <img src="{{STATIC_URL}}/img/logo.png">timeline
+    </div>
+    {% if user.is_authenticated %}
+    <div id="logout-button" class="fright">
+      Logged in as {{ user.email }}
+      <form method="post" action="{% url 'django.contrib.auth.views.logout' %}">
+	{% csrf_token %}
+	<input type="hidden" name="next" value="{% url 'timeline.views.home' %}" />
+	<input type="submit" value="Log out" />
+      </form>
+    </div>
+    {% endif %}
+    <div class="fclear"></div>
+  </div>
+  <div id="content">
+  {% block content %}{% endblock %}
+  {% block footer %}
+  {% endblock %}
+  </div>
+</body>
+</html>

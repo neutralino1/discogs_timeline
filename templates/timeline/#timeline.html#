@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}Welcome to Discogs timeline!{% endblock %}
+
+{% block content %}
+{% for l in line %}
+{{ l }}
+{% endfor %}
+{% endblock %}
+

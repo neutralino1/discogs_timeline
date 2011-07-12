@@ -1,0 +1,17 @@
+{% load url from future %}
+<div class="login-box center-div">
+  <h2 class="maiden">Login / Sign up</h2>
+  <div class="aright">
+    {% if error_message %}<p><strong>{{ error_message }}</strong></p>{% endif %}
+    <form action="{% url 'timeline.views.create' %}" method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{% url 'timeline.views.home' %}" />
+      <input type="text" name="email" class="email faded big" value="your@email.com" />
+      <!--<label for="email">Your email</label><br />-->
+      <input type="password" name="password" class="password faded big" value="password" />
+      <!--<label for="password">Password</label><br />-->
+      <input type="submit" value="Log in / Sign up" class="big"/>
+    </form>
+  </div>
+</div>
+
