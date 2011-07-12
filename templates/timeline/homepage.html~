@@ -1,2 +1,0 @@
-{% include "timeline/search.html" %}
-<script type="text/javascript" src="{{ STATIC_URL }}homepage.js"></script>
