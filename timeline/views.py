@@ -3,7 +3,7 @@ from django.shortcuts import render_to_response
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 #from django.contrib.auth.views import login, logout
-from timeline.models import TimelineUser, Release
+from timeline.models import TimelineUser, Release, Timeline
 from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from django.core.urlresolvers import reverse
@@ -106,11 +106,7 @@ def delete_release(request):
 
 def timeline(request):
     releases = get_releases(request.user, order_by='released')
-    line = {}
-    for i in range(releases[0].year(), releases[len(releases)-1].year() + 1):
-        line[i] = []
-    for r in releases:
-        line[r.year()] += [r]
+    line = Timeline(releases)
     params = {'line':line}
     return render_to_response('timeline/timeline.html', params,
                               context_instance=RequestContext(request))

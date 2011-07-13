@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from timeline.helpers import connect_hooks
 from django.core.exceptions import ValidationError
+#from math import max, min
 #from timeline.fields import ReleasedField
 
 
@@ -64,24 +65,45 @@ class Year:
 
 class Timeline:
     years = []
+    k = 0
     def __init__(self, releases):
         for r in releases:
-            y = Year(r.year())
-            y << r
-            self << y
+            self.add_release(r)
+
+    def add_release(self, release):
+        y = self.year(release.year())
+        y << release
+        self.k += 1
+
+    def year(self, y):
+        for i in self.years:
+            if i.year == y:
+                return i
+        i = Year(y)
+        self << i
+        return i
 
     def __lshift__(self, item):
         if isinstance(item, Year):
-            self.years += [item]
+            if len(self.years) == 0:
+                self.years += [item]
+            else:
+                y = self.years[0]
+                i = 1
+                while item > y and i < len(self.years):
+                    y = self.years[i]
+                    i += 1
+                self.years.insert(i, item)
+                
 
     def earliest_year(self):
         earliest = Year(3000)
         for y in self.years:
-            earliest = y if y < earliest
+            earliest = min(y, earliest)
         return earliest
 
     def latest_year(self):
         latest = Year(0)
         for y in self.years:
-            latest = y if y > latest
+            latest = max(y, latest)
         return latest

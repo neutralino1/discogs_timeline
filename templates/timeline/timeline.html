@@ -2,9 +2,12 @@
 {% block title %}Welcome to Discogs timeline!{% endblock %}
 
 {% block content %}
-{{line}}
-{% for l in line %}
-{{ l }}
+{%for y in line.years%}
+{{ y.year }}<br/>
+{% for r in y.releases %}
+{{ r.name }}
+{{ r.year }}<br/>
+{% endfor %}
 {% endfor %}
 {% endblock %}
 
