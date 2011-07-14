@@ -10,7 +10,7 @@ from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
 import discogs_client as discogs
 import logging
-logger = logging.getLogger(__name__)
+
 discogs.user_agent = 'DiscogsTimeline/0.1 +http://twitter.com/neutralino1'
 
 def get_releases(user, order_by='name'):
@@ -48,7 +48,34 @@ def search(request):
     params = {}
     params['query'] = request.GET['q']
     page = request.GET['p'] if ('p' in request.GET.keys()) else 1
-    s = discogs.Search(params['query'], page=page, only='releases')
+    s = discogs.Search(params['query'], only='releases')
+    total = int(s.data['searchresults']['numResults'])
+    params['results'] = []
+    for p in range(1, min(10, total/20 +1) ):
+        res = s.results(page=p)
+        for r in res:
+            if not isinstance(r, discogs.MasterRelease):
+                continue
+            for v in r.data['versions']:
+                if 'LP' in v['format'] and 'released' in v.keys():
+                    r.data['catno'] = v['catno']
+                    r.data['released'] = v['released']
+                    r.data['name'] = v['title']
+                    r.data['label'] = v['label']
+                    if 'images' in r.data.keys():
+                        r.data['thumb'] = r.data['images'][0]['uri150']
+                        for i in r.data['images']:
+                            if i['type'] == 'primary':
+                                r.data['thumb'] = i['uri150']
+                    params['results'] += [r.data]
+    params['total'] = len(params['results'])
+    params['page'] = 1
+    params['prevpage'] = 0
+    params['nextpage'] = 2
+    params['pages'] = 3
+    params['releases'] = get_releases(request.user)
+    return render_to_response('timeline/home.html', params, context_instance=RequestContext(request))
+'''
     params['results'] = []
     params['total'] = int(s.data['searchresults']['numResults'])
     params['page'] = int(s.data['searchresults']['start'])/20+1
@@ -79,7 +106,8 @@ def search(request):
             original['artist'] = original['artists'][0]
         params['results'] += [original]
     params['releases'] = get_releases(request.user)
-    return render_to_response('timeline/home.html', params, context_instance=RequestContext(request))
+'''
+
 #    return HttpResponseRedirect(reverse('timeline.views.home'))#, {'results': s.results()})
 
 def add_release(request):

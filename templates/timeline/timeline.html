@@ -1,13 +1,38 @@
 {% extends "base.html" %}
+{% load url from future %}
 {% block title %}Welcome to Discogs timeline!{% endblock %}
 
 {% block content %}
+<a href="{% url 'timeline.views.home' %}">Back to your collection</a>
+<table id="timeline" class="center-div">
 {%for y in line.years%}
-{{ y.year }}<br/>
+<tr>
+<td class="year-releases right-text">
+{% if y.odd %}
 {% for r in y.releases %}
-{{ r.name }}
-{{ r.year }}<br/>
+<div class="fright">
+<img src="{{ r.thumb }}"/><br/>
+{{ r.name }}<br/>
+{{ r.artist }}
+</div>
 {% endfor %}
+{% endif %}
+</td><td class="year center-text">
+{{y.year}}
+</td>
+<td class="year-releases left-text">
+{% if y.even %}
+{% for r in y.releases %}
+<div class="fleft">
+<img src="{{ r.thumb }}"/><br/>
+{{ r.name }}<br/>
+{{ r.artist }}
+</div>
 {% endfor %}
+{% endif %}
+</td>
+</tr>
+{% endfor %}
+</table>
 {% endblock %}
 

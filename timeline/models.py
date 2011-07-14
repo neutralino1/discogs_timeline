@@ -1,10 +1,10 @@
+import logging
 from django.db import models
 from django.contrib.auth.models import User
 from timeline.helpers import connect_hooks
 from django.core.exceptions import ValidationError
 #from math import max, min
 #from timeline.fields import ReleasedField
-
 
 class TimelineUser(models.Model):
     user = models.OneToOneField(User)
@@ -25,6 +25,7 @@ class Release(models.Model):
             self.released = self.released + '-01-01'
         else:
             self.released = '1970-01-01'
+        logging.debug(self.released)
 
     def clean_and_save(self):
         self.normalize_released()
@@ -40,9 +41,8 @@ class Release(models.Model):
         return int(self.released.day)
 
 class Year:
-    releases = []
-    year = 1970
     def __init__(self, year):
+        self.releases = []
         self.year = year
 
     def __str__(self):
@@ -63,17 +63,26 @@ class Year:
         if isinstance(item, Year):
             return self.year > item.year
 
+    def odd(self):
+        return self.year % 2 != 0
+
+    def even(self):
+        return self.year % 2 == 0
+
 class Timeline:
-    years = []
-    k = 0
     def __init__(self, releases):
+        self.years = []
         for r in releases:
             self.add_release(r)
+        self.complete()
+
+    def complete(self):
+        for i in range(self.years[0].year + 1, self.years[-1].year):
+            self.year(i)
 
     def add_release(self, release):
         y = self.year(release.year())
         y << release
-        self.k += 1
 
     def year(self, y):
         for i in self.years:
@@ -88,11 +97,14 @@ class Timeline:
             if len(self.years) == 0:
                 self.years += [item]
             else:
+                logging.debug('Adding %i' % item.year)
                 y = self.years[0]
-                i = 1
-                while item > y and i < len(self.years):
-                    y = self.years[i]
+                i = 0
+                while item > y:
                     i += 1
+                    if i >= len(self.years):
+                        break
+                    y = self.years[i]
                 self.years.insert(i, item)
                 
 

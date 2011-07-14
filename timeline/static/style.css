@@ -217,3 +217,44 @@ div.collection-item form.delete input{
 .hidden {
     display:none;
 }
+
+table#timeline {
+    border-width: 0px;
+    border-spacing: 0px;
+    border-collapse:collapse;
+    width:900px;
+}
+
+table#timeline td{
+    border-width: 0px;
+    border-spacing:0px;
+    height:100px;
+}
+
+td.year {
+    background-color:#010203;
+    color:#f1f2f3;
+    width:100px;
+}
+
+td.year-releases {
+    width:400px;
+    padding:10px;
+}
+
+td.year-releases img{
+    width:100px;
+}
+
+td.year-releases div{
+    width:100px;
+    margin:2px;
+}
+
+.right-text {
+    text-align:right;
+}
+
+.left-text {
+    text-align:left;
+}
