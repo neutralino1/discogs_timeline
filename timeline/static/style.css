@@ -258,3 +258,29 @@ td.year-releases div{
 .left-text {
     text-align:left;
 }
+
+div#search-live {
+    width:208px;
+    border:1px solid #8395b7;
+    padding:20px;
+    background-color:#abc4f3;
+    position:fixed;
+    bottom:0;
+    right:0;
+    margin:20px;
+}
+
+div#progress-bar{
+    margin-top:10px;
+    width:208px;
+    height:13px;
+    background:url('img/progress-bar.gif') no-repeat -6px -3px;
+}
+
+div#progress{
+    width:0%;
+    height:11px;
+    padding:1px;
+    background-color:#697895;
+    border-radius:2px;
+}

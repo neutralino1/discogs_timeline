@@ -1,0 +1,26 @@
+{% load url from future %}
+{% for r in results %}
+<li>
+<div class="fleft add-release">
+<form action="{% url 'timeline.views.add_release' %}" method="post" class="add-release-form">
+  {% csrf_token %}
+  <input type="hidden" name="discogs_id" value="{{r.id}}" />
+  <input type="hidden" name="name" value="{{r.name}}" />
+  <input type="hidden" name="released" value="{{r.year}}" />
+  <input type="hidden" name="artist" value="{{r.artist}}" />
+  <input type="hidden" name="catno" value="{{r.catno}}" />
+  <input type="hidden" name="thumb" value="{{r.thumb}}" />
+  <input type="hidden" name="label" value="{{r.label}}" />
+  <input type="submit" value="+" />
+</form>
+</div>
+<img src="{{ r.thumb }}" style="width:100px;" class="fright"/>
+<span class="release-name">{{ r.title }}</span> ({{r.format}}, {{r.year}})<br/>
+<span class="artist-name">{{ r.artist }}</span><br/>
+<span class="label-name">{{ r.label }}</span><br/>
+<span class="cat-no">{{ r.cat_no }}</span>
+| <span class="discogs-id"><a href="http://www.discogs.com/release/{{r.id}}"
+			      target="new">#{{r.id}}</a></span>
+<div class="fclear"></div>
+</li>
+{% endfor %}

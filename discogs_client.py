@@ -6,6 +6,7 @@ import json
 import urllib
 import httplib
 from collections import defaultdict
+import logging
 
 api_uri = 'http://api.discogs.com'
 user_agent = None
@@ -187,6 +188,10 @@ class Release(APIBase):
         return self._artists
 
     @property
+    def artist(self):
+        return self.data['artists'][0]['name']
+
+    @property
     def master(self):
         if not self._master and self.data.get('master_id'):
             self._master = MasterRelease(self.data.get('master_id'))
@@ -197,6 +202,10 @@ class Release(APIBase):
         if not self._labels:
             self._labels =  [Label(l['name']) for l in self.data.get('labels', [])]
         return self._labels
+
+    @property
+    def label(self):
+        return self.data['labels'][0]['name']
 
     @property
     def credits(self):
@@ -228,10 +237,29 @@ class Release(APIBase):
 
     @property
     def cat_no(self):
-        if 'catno' in self.data.keys():
-            return self.data['catno']
-        else:
-            return ''
+        return self.data['labels'][0]['catno']
+#        if 'catno' in self.data.keys():
+#            return self.data['catno']
+#        else:
+#            return ''
+
+    @property
+    def id(self):
+        return self._id
+
+    @property
+    def thumb(self):
+        if 'images' in self.data.keys():
+            img = self.data['images'][0]
+            for i in self.data['images']:
+                if i['type'] == 'primary':
+                    img = i
+                    break
+            return img['uri150']
+
+    @property
+    def format(self):
+        return self.data['formats'][0]['descriptions'][0]
 
 class MasterRelease(APIBase):
     def __init__(self, id):

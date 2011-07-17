@@ -1,54 +1,20 @@
 {% load url from future %}
 <div id="search-box">
 Search release to add to your timeline
-<form action="{% url 'timeline.views.search' %}" method="get">
+<form action="{% url 'timeline.views.search' %}" method="get" id="search-form">
 <input type="text" name="q" id="search-query"
 value="{% if query %} {{query}} 
 {% else %}Artist, album, song, catalog number...{%endif%}" class="{% if not query %}faded{% endif %} big"/>
-<input type="submit" value="Search" class="big"/>
+<input type="submit" value="Search" class="big" id="search-button"/>
 </form>
 </div>
-{# results #}
-{% if results %}
-<div id="search-results" class="light-grey">
-<div class="right-text">{{ total  }} results</div>
-<ul>
-{% for r in results %}
-<li>
-<div class="fleft add-release">
-<form action="{% url 'timeline.views.add_release' %}" method="post">
-  {% csrf_token %}
-  <input type="hidden" name="discogs_id" value="{{r.id}}" />
-  <input type="hidden" name="name" value="{{r.name}}" />
-  <input type="hidden" name="released" value="{{r.released}}" />
-  <input type="hidden" name="artist" value="{{r.artist.name}}" />
-  <input type="hidden" name="catno" value="{{r.catno}}" />
-  <input type="hidden" name="thumb" value="{{r.thumb}}" />
-  <input type="hidden" name="label" value="{{r.label}}" />
-  <input type="submit" value="+" />
-</form>
-</div>
-{% if r.thumb %}
-<img src="{{ r.thumb }}" style="width:100px;" class="fright"/>
-{% endif %}
-<span class="release-name">{{ r.name }}</span> ({{r.released}})<br/>
-<span class="artist-name">{% for a in r.artists %}
-{{a.name}}
-{% endfor %}</span><br/>
-<span class="label-name">{{ r.label }}</span><br/>
-<span class="cat-no">{{ r.catno }}</span> | <span class="discogs-id">#{{r.id}}</span>
-<div class="fclear"></div>
-</li>
-{% endfor %}
+<div id="search-results" class="light-grey hidden">
+<ul id="results-list">
 </ul>
-<div class="center-text">
-{% if page > 1 %}
-<a href="/search?q={{query}}&p={{prevpage}}">prev</a>
-{% endif %}
-{{ page }} / {{pages }}
-{% if page < pages %}
-<a href="/search?q={{query}}&p={{nextpage}}">next</a>
-{% endif %}
+</div>
+<div id="search-live" class="center-text hidden">
+<span id="live-message">Querying Discogs ...</span>
+<div class="center-text" id="spinner-div">
+<div id="progress-bar"><div id="progress"></div></div>
 </div>
 </div>
-{% endif %}

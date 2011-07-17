@@ -3,7 +3,7 @@
 <div id="my-collection" class="center-div light-grey">
 <ul>
 {% for r in releases %}
-<li class="fleft">
+<li class="fleft" id="release-{{r.id}}">
 <div class="collection-item">
 <img src="{{ r.thumb }}" class="fleft thumb"/>
 <span class="collection-release">{{r.name}}</span><br/>
@@ -12,8 +12,8 @@
   | {{r.catno}}</span>
 <form action="{% url 'timeline.views.delete_release' %}"
   method="delete" class="delete">
-<input type="hidden" name="id" value="{{ r.id }}" />
-<input type="submit" class="hidden" value=""/></form>
+  <input type="hidden" name="id" value="{{ r.id }}" id="delete-id"/>
+  <input type="submit" class="hidden" value=""/></form>
 </div>
 </li>
 {% endfor %}

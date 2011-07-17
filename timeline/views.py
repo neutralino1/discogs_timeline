@@ -8,6 +8,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.http import Http404
 from django.core.urlresolvers import reverse
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
+from django.utils import simplejson
 import discogs_client as discogs
 import logging
 
@@ -44,7 +45,7 @@ def create(request):
     return HttpResponseRedirect(reverse('timeline.views.home'))
 #    return render_to_response('timeline/home.html', {}, context_instance=RequestContext(request))
 
-def search(request):
+def search2(request):
     params = {}
     params['query'] = request.GET['q']
     page = request.GET['p'] if ('p' in request.GET.keys()) else 1
@@ -54,20 +55,25 @@ def search(request):
     for p in range(1, min(10, total/20 +1) ):
         res = s.results(page=p)
         for r in res:
+            rec = {}
             if not isinstance(r, discogs.MasterRelease):
                 continue
             for v in r.data['versions']:
                 if 'LP' in v['format'] and 'released' in v.keys():
-                    r.data['catno'] = v['catno']
-                    r.data['released'] = v['released']
-                    r.data['name'] = v['title']
-                    r.data['label'] = v['label']
+                    rec['catno'] = v['catno']
+                    rec['released'] = v['released']
+                    rec['name'] = v['title']
+                    rec['label'] = v['label']
+                    rec['artist'] = r.data['artists'][0]['name']
+                    rec['id'] = v['id']
                     if 'images' in r.data.keys():
-                        r.data['thumb'] = r.data['images'][0]['uri150']
+                        rec['thumb'] = r.data['images'][0]['uri150']
                         for i in r.data['images']:
                             if i['type'] == 'primary':
-                                r.data['thumb'] = i['uri150']
-                    params['results'] += [r.data]
+                                rec['thumb'] = i['uri150']
+                    params['results'] += [rec]
+                    logging.debug(rec)
+                    if rec: break
     params['total'] = len(params['results'])
     params['page'] = 1
     params['prevpage'] = 0
@@ -75,40 +81,36 @@ def search(request):
     params['pages'] = 3
     params['releases'] = get_releases(request.user)
     return render_to_response('timeline/home.html', params, context_instance=RequestContext(request))
-'''
-    params['results'] = []
-    params['total'] = int(s.data['searchresults']['numResults'])
-    params['page'] = int(s.data['searchresults']['start'])/20+1
-    params['prevpage'] = params['page'] - 1
-    params['nextpage'] = params['page'] + 1
-    params['pages'] = params['total']/20+1
-    for r in s.results(page=page):
-        original = r.data
-        if not isinstance(r, discogs.MasterRelease):
-            continue
-        for v in r.data['versions']:
-            if 'released' in v.keys():
-                if ('released' not in original.keys()) or \
-                        ('released' in original.keys() and v['released'] < original['released'] and \
-                             len(v['released']) > 4):
-                    original['released'] = v['released']
-                    original['catno'] = v['catno']
-                    original['name'] = v['title']
-                    original['label'] = v['label']
-            else:
-                original['released'] = original['year']
-        if 'images' in original.keys():
-        #if (not 'thumb' in original.keys()) and ('images' in r.data.keys()):
-            original['thumb'] = original['images'][0]['uri150']
-            for i in original['images']:
-                if i['type'] == 'primary':
-                    original['thumb'] = i['uri150']
-            original['artist'] = original['artists'][0]
-        params['results'] += [original]
-    params['releases'] = get_releases(request.user)
-'''
 
-#    return HttpResponseRedirect(reverse('timeline.views.home'))#, {'results': s.results()})
+def search(request):
+    params = {}
+    params['query'] = request.GET['q']
+    page = int(request.GET['p']) if ('p' in request.GET.keys()) else 1
+    s = discogs.Search(params['query'], only='releases')
+    total = int(s.data['searchresults']['numResults'])
+    total_pages = total/20 + 1
+    params['results'] = []
+    res = s.results(page=page)
+    n = 0
+    for r in res:
+        rec = {}
+        if not isinstance(r, discogs.Release):
+            continue
+        ok = 0
+        for f in r.data['formats']:
+            if 'Vinyl' in f['name']:
+                ok = 1
+                break
+        if ok:
+            params['results'] += [r]
+    params['total'] = total
+    params['page'] = page
+#    params['releases'] = get_releases(request.user)
+    t = loader.get_template('timeline/search-results.html')
+    c = Context(params)
+    return HttpResponse(simplejson.dumps({'total':total_pages, 'page':page, 'query':params['query'],
+                                          'content':t.render(c), 'nres':len(params['results']), 'tres':total}), 
+                        mimetype='application/javascript')
 
 def add_release(request):
     catno = request.POST['catno']
@@ -127,10 +129,18 @@ def add_release(request):
     return HttpResponseRedirect(reverse('timeline.views.home'))
 
 def delete_release(request):
+    params = {}
+    logging.debug(request)
     id = request.GET['id']
+    logging.debug(id)
     release = Release.objects.get(id=id)
     release.owners.remove(request.user.timelineuser)
-    return HttpResponseRedirect(reverse('timeline.views.home'))
+    params['releases'] = get_releases(request.user)
+    t = loader.get_template('timeline/my_releases.html')
+    c = Context(params)
+    return HttpResponse(t.render(c))
+    #
+    #return HttpResponseRedirect(reverse('timeline.views.home'))
 
 def timeline(request):
     releases = get_releases(request.user, order_by='released')
