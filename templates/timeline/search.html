@@ -5,7 +5,8 @@ Search release to add to your timeline
 <input type="text" name="q" id="search-query"
 value="{% if query %} {{query}} 
 {% else %}Artist, album, song, catalog number...{%endif%}" class="{% if not query %}faded{% endif %} big"/>
-<input type="submit" value="Search" class="big" id="search-button"/>
+<input type="submit" value="Search" class="big"
+       id="search-button"/>
 </form>
 </div>
 <div id="search-results" class="light-grey hidden">

@@ -33,7 +33,7 @@ var Search = {
 	this.resultsBox = $('div#search-results');
 	this.resultsList = $('ul#results-list');
 	this.queryInput = $('input#search-query');
-	this.emptyValue = this.queryInput.val();   
+	this.emptyValue = this.queryInput.val();
 	this.queryInput.bind('focus', function(){
 	    if (this.queryInput.val() == this.emptyValue){
 		this.queryInput.removeClass('faded');
@@ -50,19 +50,21 @@ var Search = {
 		this.queryInput.removeClass('set');
 	    }
 	}.bind(this));
-	$('form#search-form').submit(function(event){
+	this.searchForm = $('form#search-form');
+	this.searchForm.submit(function(event){
             NotificationArea.show();
 	    this.resultsList.find('li').remove();
 	    this.resultsBox.addClass('hidden');
             NotificationArea.startSearch();
-	    var q = this.queryInput.val();
+	    var q = this.searchForm.serialize();
 	    this.retrieved = 0;
 	    this.search(q, 1);
 	    event.preventDefault();
 	}.bind(this));
     },
     search:function(query, page){
-	$.get("/search", {q:query, p:page}, function(data) {
+	if(this.request) this.request.abort();
+	this.request = $.get("/search", query+'&p='+page, function(data) {
 	    this.resultsBox.removeClass('hidden');
 	    this.resultsList.append(data.content);
 	    this.bindAddButtons();
@@ -76,35 +78,45 @@ var Search = {
 	    }
 	}.bind(this), 'json');
     },
+    bindAddButtons:function(){
+	$('form.add-release-form').each(function(){
+	    $(this).unbind();
+	    $(this).submit(function(event){
+		$.post($(this).attr('action'), $(this).serialize(), function(data){
+		    MyCollection.fill(data);
+		});
+		event.preventDefault();
+	    }.bind(this));
+	});
+    }
 };
 
 var MyCollection = {
     init:function(){
         this.setupHover();
-        this.setupDelete();
+        this.bindDeleteButtons();
+	this.container = $('div#collection-container');
     },
     setupHover:function(){
 	$('div.collection-item').bind('mouseenter mouseleave', function(){
 	    $(this).find('form.delete input').toggleClass('hidden');
 	});
     },
-    setupDelete:function(){
+    bindDeleteButtons:function(){
 	$('form.delete').submit(function(event){
 	    var id = $(this).find('input#delete-id').val();
 	    var item = $('li#release-'+id);
 	    item.fadeOut(1000);
 	    $.ajax({
 		type:'DELETE',
-		url:'/users/delete_release/?id='+id,
-		success:function(data){
-//		    item.fadeOut(1000, function(){
-//			$('div#collection-container').html(data);
-//		    });
-		}
+		url:'/users/delete_release/?id='+id
 	    });
 	    event.preventDefault();
 	});
-
+    },
+    fill:function(data){
+	this.container.html(data);
+	this.init();
     }
 };
 
@@ -114,14 +126,6 @@ var HomePage = {
         NotificationArea.init();
         Search.init();
     },
-    bindAddButtons:function(){
-	$('form.add-release-form').submit(function(event){
-	    console.log(this);
-	    console.log($(this).find('input[name]').val());
-	    console.log(2);
-	    event.preventDefault();
-	});
-    }
 };
 
 $(document).ready(function(){

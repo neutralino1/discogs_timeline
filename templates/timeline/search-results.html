@@ -5,10 +5,10 @@
 <form action="{% url 'timeline.views.add_release' %}" method="post" class="add-release-form">
   {% csrf_token %}
   <input type="hidden" name="discogs_id" value="{{r.id}}" />
-  <input type="hidden" name="name" value="{{r.name}}" />
+  <input type="hidden" name="name" value="{{r.title}}" />
   <input type="hidden" name="released" value="{{r.year}}" />
   <input type="hidden" name="artist" value="{{r.artist}}" />
-  <input type="hidden" name="catno" value="{{r.catno}}" />
+  <input type="hidden" name="catno" value="{{r.cat_no}}" />
   <input type="hidden" name="thumb" value="{{r.thumb}}" />
   <input type="hidden" name="label" value="{{r.label}}" />
   <input type="submit" value="+" />

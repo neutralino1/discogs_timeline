@@ -5,11 +5,14 @@
 {% for r in releases %}
 <li class="fleft" id="release-{{r.id}}">
 <div class="collection-item">
-<img src="{{ r.thumb }}" class="fleft thumb"/>
+<img src="{% if r.thumb %}{{ r.thumb }}
+	  {% else %}
+	  {{STATIC_URL}}img/record150.png
+	  {% endif %}" class="fleft thumb"/>
 <span class="collection-release">{{r.name}}</span><br/>
 <span class="collection-artist">{{r.artist}}</span></br>
 <span class="discogs-id"><a href="http://discogs.com/master/{{r.discogs_id}}">{{r.discogs_id}}</a></span><span class="cat-no">
-  | {{r.catno}}</span>
+  | {{r.catno}} | {{r.year}}</span>
 <form action="{% url 'timeline.views.delete_release' %}"
   method="delete" class="delete">
   <input type="hidden" name="id" value="{{ r.id }}" id="delete-id"/>

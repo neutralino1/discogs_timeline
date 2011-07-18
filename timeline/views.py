@@ -90,7 +90,10 @@ def search(request):
     total = int(s.data['searchresults']['numResults'])
     total_pages = total/20 + 1
     params['results'] = []
-    res = s.results(page=page)
+    if 'exact' in request.GET.keys():
+        res = s.exactresults#(page=page)
+    else:
+        res = s.results(page=page)
     n = 0
     for r in res:
         rec = {}
@@ -107,7 +110,7 @@ def search(request):
     params['page'] = page
 #    params['releases'] = get_releases(request.user)
     t = loader.get_template('timeline/search-results.html')
-    c = Context(params)
+    c = RequestContext(request, params)
     return HttpResponse(simplejson.dumps({'total':total_pages, 'page':page, 'query':params['query'],
                                           'content':t.render(c), 'nres':len(params['results']), 'tres':total}), 
                         mimetype='application/javascript')
@@ -126,7 +129,9 @@ def add_release(request):
                           released=request.POST['released'])
         release.clean_and_save()
     release.owners.add(request.user.timelineuser)
-    return HttpResponseRedirect(reverse('timeline.views.home'))
+    t = loader.get_template('timeline/my_releases.html')
+    c = Context({'releases':get_releases(request.user)})
+    return HttpResponse(t.render(c))
 
 def delete_release(request):
     params = {}
