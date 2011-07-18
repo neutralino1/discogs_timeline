@@ -28,19 +28,12 @@ var NotificationArea = {
     }
 };
 
-var HomePage = {
+var Search = {
     init:function(){
 	this.resultsBox = $('div#search-results');
 	this.resultsList = $('ul#results-list');
 	this.queryInput = $('input#search-query');
-	this.emptyValue = this.queryInput.val();
-	this.setupSearch();
-	this.setupCollection();
-	$('div.collection-item').bind('mouseenter mouseleave', function(){
-	    $(this).find('form.delete input').toggleClass('hidden');
-	});
-    },
-    setupSearch:function(){
+	this.emptyValue = this.queryInput.val();   
 	this.queryInput.bind('focus', function(){
 	    if (this.queryInput.val() == this.emptyValue){
 		this.queryInput.removeClass('faded');
@@ -83,7 +76,19 @@ var HomePage = {
 	    }
 	}.bind(this), 'json');
     },
-    setupCollection:function(){
+};
+
+var MyCollection = {
+    init:function(){
+        this.setupHover();
+        this.setupDelete();
+    },
+    setupHover:function(){
+	$('div.collection-item').bind('mouseenter mouseleave', function(){
+	    $(this).find('form.delete input').toggleClass('hidden');
+	});
+    },
+    setupDelete:function(){
 	$('form.delete').submit(function(event){
 	    var id = $(this).find('input#delete-id').val();
 	    var item = $('li#release-'+id);
@@ -99,6 +104,15 @@ var HomePage = {
 	    });
 	    event.preventDefault();
 	});
+
+    }
+};
+
+var HomePage = {
+    init:function(){
+	MyCollection.init();
+        NotificationArea.init();
+        Search.init();
     },
     bindAddButtons:function(){
 	$('form.add-release-form').submit(function(event){
