@@ -1,13 +1,39 @@
+var NotificationArea = {
+    init:function(){
+        this.searchLive = $('div#search-live');
+        this.liveMessage = $('span#live-message');
+        this.progress = $('div#progress');
+	this.progressBar = $('div#progress-bar');
+    },
+    show:function(){
+        this.searchLive.fadeIn(1000);
+    },
+    hide:function(){
+        this.searchLive.fadeOut(5000);
+    },
+    startSearch:function(){
+        this.updateProgress(0, 100);
+        this.setMessage('Querying Discogs ...');
+    },
+    updateProgress:function(n, total){
+ 	this.progress.css('width', 100.*n/total + '%');
+    },
+    finishSearch:function(){
+        this.setMessage('Search is over');
+        this.updateProgress(100, 100);
+        this.hide();
+    },
+    setMessage:function(message){
+       this.liveMessage.text(message);
+    }
+};
+
 var HomePage = {
     init:function(){
 	this.resultsBox = $('div#search-results');
 	this.resultsList = $('ul#results-list');
 	this.queryInput = $('input#search-query');
 	this.emptyValue = this.queryInput.val();
-	this.searchLive = $('div#search-live');
-	this.liveMessage = $('span#live-message');
-	this.progress = $('div#progress');
-	this.progressBar = $('div#progress-bar');
 	this.setupSearch();
 	this.setupCollection();
 	$('div.collection-item').bind('mouseenter mouseleave', function(){
@@ -32,11 +58,10 @@ var HomePage = {
 	    }
 	}.bind(this));
 	$('form#search-form').submit(function(event){
-	    this.searchLive.fadeIn(1000);
+            NotificationArea.show();
 	    this.resultsList.find('li').remove();
 	    this.resultsBox.addClass('hidden');
-	    this.progress.css('width','0%');
-	    this.liveMessage.text('Querying Discogs ...');
+            NotificationArea.startSearch();
 	    var q = this.queryInput.val();
 	    this.retrieved = 0;
 	    this.search(q, 1);
@@ -50,13 +75,11 @@ var HomePage = {
 	    this.bindAddButtons();
 	    if (data.page < data.total){
 		this.retrieved += data.nres;
-		this.progress.css('width',data.page/data.total*100 + '%');
+                NotificationArea.updateProgress(data.page, data.total);
 		this.search(query, data.page + 1);
 	    }
 	    else{
-		this.liveMessage.text('Search is over');
-		this.progress.css('width','100%');
-		this.searchLive.fadeOut(10000);
+                NotificationArea.finishSearch();
 	    }
 	}.bind(this), 'json');
     },
